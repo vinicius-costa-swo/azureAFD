@@ -1,14 +1,19 @@
 param frontDoorProfileName string
-param location string
+param location string = 'global'
 
 @allowed([
   'S1'
 ])
 param frontDoorSkuName string
-resource frontDoorProfile 'Microsoft.Cdn/profiles@2021-06-01' = {
+
+
+@description('Front Door Profile Creation')
+resource frontDoorProfile 'Microsoft.Cdn/profiles@2021-06-01' =  {
   name: frontDoorProfileName
   location: location
   sku: {
     name: frontDoorSkuName
   }
 }
+
+output profileId string = frontDoorProfile.properties.frontDoorId
