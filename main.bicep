@@ -1,18 +1,18 @@
 //Setting The deployment Scope
-targetScope = 'subscription'
+//targetScope = 'subscription'
 
 //Deployment Variables for Front Door Profile
 var profileDeploymentName = 'afdProfileDepolyment'
 var frontDoorProfileName = 'fd-swo-dev-we-1'
 var frontDoorSkuName = 'Premium_AzureFrontDoor'
 var location = 'global'
-var resourceGroupName = 'rg-vinicius-costa-demo'
+//var resourceGroupName = 'rg-vinicius-costa-demo'
 
 // Front door Profile
 
 @description('Importing module to deploy Azure Froont Door')
 module frontDoorProfile 'modules/frootDoorProfile.bicep' = {
-  scope: resourceGroup(resourceGroupName)
+  //scope: resourceGroup(resourceGroupName)
   name: profileDeploymentName
   params: {
     frontDoorProfileName: frontDoorProfileName
@@ -30,7 +30,7 @@ var EndEndpointName = 'fd-swo-dev-we-1'
 
 @description('Importing module to deploy Front Door Endpoint')
 module frontDoorEndpoint  'modules/frontDoorEndpoint.bicep' = {
-  scope: resourceGroup(resourceGroupName)
+  //scope: resourceGroup(resourceGroupName)
   name: endpointDeploymentName
   params: {
     frontEndEndpointName: EndEndpointName
@@ -51,7 +51,7 @@ var samplesRequired = 3
 //Front Door Origin Group
 @description('Importing module to deploy Front Door Origin Group')
 module frontDoorOriginGroup 'modules/originGroup.bicep' = {
-  scope: resourceGroup(resourceGroupName)
+  //scope: resourceGroup(resourceGroupName)
   name: originGroupDeploymentName
   params: {
     frontDoorOriginGroupName: originGroupName
@@ -73,7 +73,7 @@ var originDeployname = 'originDeploy'
 //Front Door Origin
 @description('Import module Front Door Origin')
 module Origin 'modules/frontDoorOrigin.bicep' = {
-  scope: resourceGroup(resourceGroupName)
+  //scope: resourceGroup(resourceGroupName)
   name: originDeployname
   params: {
     frontDoorOriginName: frontDoorOriginName
@@ -85,7 +85,7 @@ module Origin 'modules/frontDoorOrigin.bicep' = {
 //Front Door Route
 
 module route 'modules/route.bicep' = {
-  scope: resourceGroup(resourceGroupName)
+  //scope: resourceGroup(resourceGroupName)
   name: 'testdeploy'
   params: {
     frontDoorRouteName: 'frontdoorRoute'
