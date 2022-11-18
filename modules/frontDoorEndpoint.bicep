@@ -1,19 +1,16 @@
-param frontEndEndpointName string 
-param location string = resourceGroup().location
+//resource frontDoorProfile 'Microsoft.Cdn/profiles@2021-06-01' existing =  {
+  //name: 'fdprofilename'
+//}
 
-resource frontDoorProfile 'Microsoft.Cdn/profiles@2021-06-01' existing =  {
-  name: 'fd-swo-dev-we-1'
-}
-
+param frontDoorEndpointName string
+param location string
+param enabledState string
+param parent object
 resource frontDoorEndpoint 'Microsoft.Cdn/profiles/afdEndpoints@2021-06-01' = {
-  name: frontEndEndpointName
+  name: frontDoorEndpointName
+  //parent: frontDoorProfile
   location: location
-  parent: frontDoorProfile
-  properties:{
-    enabledState: 'Enabled'
+  properties: {
+    enabledState: enabledState
   }
 }
-
-output endpointName string = frontDoorEndpoint.name
-output endpointHostname string = frontDoorEndpoint.properties.hostName
-

@@ -1,51 +1,58 @@
-param location string = resourceGroup().location
 
-resource frontDoorProfile 'Microsoft.Cdn/profiles@2021-06-01' existing =  {
-  name: 'fd-swo-dev-we-1'
-}
+param appServicePlanName string
+param location string
+@allowed([
+  'F1'
+])
+param appServicePlanSkuName string
+param appServicePlanCapacity int
 
 resource appServicePlan 'Microsoft.Web/serverFarms@2020-06-01' = {
-  name: 'testapp'
+  name: appServicePlanName
   location: location
   sku: {
-    name: 'S1'
-    capacity: 1
+    name: appServicePlanSkuName
+    capacity: appServicePlanCapacity
   }
   kind: 'app'
 }
 
-resource app 'Microsoft.Web/sites@2020-06-01' = {
-  name: 'testapp'
+//appService Deploy
+
+param kind string
+param appName string
+param frontDoorId string
+
+resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
+  name: appName
   location: location
-  kind: 'app'
+  kind: kind
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
     serverFarmId: appServicePlan.id
     httpsOnly: true
-    siteConfig: {
+    siteConfig:{
       detailedErrorLoggingEnabled: true
       httpLoggingEnabled: true
       requestTracingEnabled: true
       ftpsState: 'Disabled'
       minTlsVersion: '1.2'
-      ipSecurityRestrictions: [
-        {
-          tag: 'ServiceTag'
-          ipAddress: 'AzureFrontDoor.Backend'
-          action: 'Allow'
-          priority: 100
-          headers: {
-            'x-azure-fdid': [
-              frontDoorProfile.properties.frontDoorId
-            ]
-          }
-          name: 'Allow traffic from Front Door'
+      ipSecurityRestrictions:[{
+        tag: 'ServiceTag'
+        ipAddress: 'AzureFrontDoor.Backend'
+        action: 'Allow'
+        priority: 100
+        headers: {
+          'x-azure-fdid':[
+            frontDoorId
+          ]
         }
-      ]
+        name: 'Allow traffic from Front Door'
+      }]
     }
   }
 }
 
-output appServiceHostName string = app.properties.defaultHostName
+output hostName string = appServiceApp.properties.defaultHostName

@@ -1,22 +1,14 @@
-resource frontDoorOriginGroup 'Microsoft.Cdn/profiles/originGroups@2021-06-01' existing = {
-  name: '/originGroup'
-}
-resource frontDoorEndpoint 'Microsoft.Cdn/profiles/afdEndpoints@2021-06-01' existing =  {
-  name: '/fd-swo-dev-we-1'
-}
-
+param parent object
 param frontDoorRouteName string
+param dependsOn object
+param originId string
 
 
 resource frontDoorRoute 'Microsoft.Cdn/profiles/afdEndpoints/routes@2021-06-01' = {
   name: frontDoorRouteName
-  parent: frontDoorEndpoint
-  dependsOn: [
-    frontDoorOriginGroup // This explicit dependency is required to ensure that the origin group is not empty when the route is created.
-  ]
   properties: {
     originGroup: {
-      id: frontDoorOriginGroup.id
+      id: originId
     }
     supportedProtocols: [
       'Http'

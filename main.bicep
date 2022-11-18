@@ -1,19 +1,14 @@
-//Setting The deployment Scope
-//targetScope = 'subscription'
+targetScope = 'resourceGroup'
 
-//Deployment Variables for Front Door Profile
-var profileDeploymentName = 'afdProfileDepolyment'
-var frontDoorProfileName = 'fd-swo-dev-we-1'
-var frontDoorSkuName = 'Premium_AzureFrontDoor'
+//Profile
+var frontDoorProfileName = 'fdprofilename'
+var profileDeployName = 'profileDeploy'
+var frontDoorSkuName = 'S1'
 var location = 'global'
-//var resourceGroupName = 'rg-vinicius-costa-demo'
 
-// Front door Profile
 
-@description('Importing module to deploy Azure Froont Door')
 module frontDoorProfile 'modules/frootDoorProfile.bicep' = {
-  //scope: resourceGroup(resourceGroupName)
-  name: profileDeploymentName
+  name: profileDeployName
   params: {
     frontDoorProfileName: frontDoorProfileName
     frontDoorSkuName: frontDoorSkuName
@@ -21,73 +16,82 @@ module frontDoorProfile 'modules/frootDoorProfile.bicep' = {
   }
 }
 
-//Deployment Variables to Front Door Endpoint
+//AppService
+var appServiceDeployName = 'AppServiceDeploy'
+var appName = 'testapp'
+var appServiceSkuName = 'F1'
+var kind = 'app'
+var appServicePlanName = 'appServiceFD'
+var appServiceCapacity = 1
 
-var endpointDeploymentName = 'afdEndpointDepolyment'
-var EndEndpointName = 'fd-swo-dev-we-1'
-
-//Front Door Endpoint deployment
-
-@description('Importing module to deploy Front Door Endpoint')
-module frontDoorEndpoint  'modules/frontDoorEndpoint.bicep' = {
-  //scope: resourceGroup(resourceGroupName)
-  name: endpointDeploymentName
+module appService 'modules/appservice.bicep' = {
+  name: appServiceDeployName
   params: {
-    frontEndEndpointName: EndEndpointName
+    appName: appName
+    appServicePlanCapacity: appServiceCapacity
+    appServicePlanName: appServicePlanName
+    appServicePlanSkuName: appServiceSkuName
+    kind: kind
     location: location
+    frontDoorId:frontDoorProfile.outputs.profileId
   }
 }
 
-//Variables for Front Door Origin Group
-var originGroupDeploymentName = 'afdOriginGroupDeploy'
-var originGroupName = 'originGroup'
-var probeInterval = 100
-var probePath = '/'
-var probeProtocol = 'Https'
-var requestType = 'GET'
+//Endpoint
+var endPointDeploymentName = 'edpDeploy'
+var enabledState = 'Enabled'
+var frontDoorEndPointName = 'fdedp'
+
+module endPoint 'modules/frontDoorEndpoint.bicep' = {
+  name: endPointDeploymentName
+  params: {
+    enabledState: enabledState
+    frontDoorEndpointName: frontDoorEndPointName
+    location: location
+    parent: frontDoorProfile
+  }
+}
+
+//Origin
+var originDeployName = 'originDeploy'
+var frontDoorOriginGroupName = 'OriginGroup'
+var frontDoorOriginName = 'OriginName'
+var priority = 1
+var poolIntervalInSeconds = 100
+var probeProtocol = 'Http'
+var probeRequestType = 'GET'
+var sampleRequired = 3
 var sampleSize = 4
-var samplesRequired = 3
-
-//Front Door Origin Group
-@description('Importing module to deploy Front Door Origin Group')
-module frontDoorOriginGroup 'modules/originGroup.bicep' = {
-  //scope: resourceGroup(resourceGroupName)
-  name: originGroupDeploymentName
-  params: {
-    frontDoorOriginGroupName: originGroupName
-    probeInterval: probeInterval
-    probePath: probePath
-    probeProtocol: probeProtocol
-    requestType: requestType
-    sampleSize: sampleSize
-    samplesRequired: samplesRequired
-  }
-}
-
-//variables for front door origin
-var priotity = 1
 var weight = 1000
-var frontDoorOriginName = 'testOrigin'
-var originDeployname = 'originDeploy'
 
-//Front Door Origin
-@description('Import module Front Door Origin')
-module Origin 'modules/frontDoorOrigin.bicep' = {
-  //scope: resourceGroup(resourceGroupName)
-  name: originDeployname
+module origin 'modules/frontDoorOrigin.bicep' = {
+  name: originDeployName
   params: {
+    frontDoorOriginGroupName: frontDoorOriginGroupName
     frontDoorOriginName: frontDoorOriginName
-    priority: priotity
+    priority: priority
+    probeIntevalInSeconds: poolIntervalInSeconds
+    probeProtocol: probeProtocol
+    probeRequestType: probeRequestType
+    sampleRequired: sampleRequired
+    sampleSize: sampleSize
     weight: weight
+    parent: frontDoorProfile
+    hostname: appService.outputs.hostName
+    originHostHeader: appService.outputs.hostName
   }
 }
 
-//Front Door Route
+//Route
+var routeDeployName = 'routeDeploy'
+var routeName = 'routeFD'
 
 module route 'modules/route.bicep' = {
-  //scope: resourceGroup(resourceGroupName)
-  name: 'testdeploy'
+  name: routeDeployName
   params: {
-    frontDoorRouteName: 'frontdoorRoute'
+    dependsOn:origin.outputs.fdorigin
+    frontDoorRouteName: routeName
+    originId: origin.outputs.originId
+    parent: endPoint   
   }
 }
