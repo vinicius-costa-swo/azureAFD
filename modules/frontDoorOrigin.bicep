@@ -1,6 +1,6 @@
-//resource frontDoorProfile 'Microsoft.Cdn/profiles@2021-06-01' existing =  {
-  //name: 'fdprofilename'
-//}
+resource frontDoorProfile 'Microsoft.Cdn/profiles@2021-06-01' existing =  {
+   name: 'fdprofilename'
+}
 
 param frontDoorOriginGroupName string
 param sampleSize int
@@ -11,6 +11,7 @@ param probeIntevalInSeconds int
 
 resource frontDoorOriginGroup 'Microsoft.Cdn/profiles/originGroups@2021-06-01' = {
   name: frontDoorOriginGroupName
+  parent:frontDoorProfile
   properties: {
     loadBalancingSettings: {
       sampleSize: sampleSize
@@ -29,11 +30,11 @@ param frontDoorOriginName string
 param priority int
 param weight int
 param hostname string
-param parent object
 param originHostHeader string
 
 resource frontDoorOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
-  name: frontDoorOriginName  
+  name: frontDoorOriginName
+  parent: frontDoorOriginGroup
   properties: {
     hostName: hostname
     httpPort: 80
@@ -41,6 +42,7 @@ resource frontDoorOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01
     originHostHeader: originHostHeader
     priority: priority
     weight: weight
+
   }
 }
 

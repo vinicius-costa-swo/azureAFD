@@ -1,4 +1,7 @@
-param parent object
+resource frondDoorEndpoint 'Microsoft.Cdn/profiles/afdendpoints@2021-06-01' existing = {
+  name: 'fdprofilename/fdedp'
+}
+//param parent object
 param frontDoorRouteName string
 param dependsOn object
 param originId string
@@ -6,6 +9,7 @@ param originId string
 
 resource frontDoorRoute 'Microsoft.Cdn/profiles/afdEndpoints/routes@2021-06-01' = {
   name: frontDoorRouteName
+  parent: frondDoorEndpoint
   properties: {
     originGroup: {
       id: originId
