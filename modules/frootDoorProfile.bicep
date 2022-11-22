@@ -2,7 +2,7 @@ param frontDoorProfileName string
 param location string = 'global'
 
 @allowed([
-  'S1'
+  'Standard_AzureFrontDoor'
 ])
 param frontDoorSkuName string
 

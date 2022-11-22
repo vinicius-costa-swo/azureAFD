@@ -3,7 +3,7 @@ targetScope = 'resourceGroup'
 //Profile
 var frontDoorProfileName = 'fdprofilename'
 var profileDeployName = 'profileDeploy'
-var frontDoorSkuName = 'S1'
+var frontDoorSkuName = 'Standard_AzureFrontDoor'
 var location = 'global'
 
 
@@ -18,11 +18,12 @@ module frontDoorProfile 'modules/frootDoorProfile.bicep' = {
 
 //AppService
 var appServiceDeployName = 'AppServiceDeploy'
-var appName = 'testapp'
+var appName = 'testappvinicosta'
 var appServiceSkuName = 'F1'
 var kind = 'app'
 var appServicePlanName = 'appServiceFD'
 var appServiceCapacity = 1
+var AppServiceLocation = 'westeurope'
 
 module appService 'modules/appservice.bicep' = {
   name: appServiceDeployName
@@ -32,7 +33,7 @@ module appService 'modules/appservice.bicep' = {
     appServicePlanName: appServicePlanName
     appServicePlanSkuName: appServiceSkuName
     kind: kind
-    location: location
+    location: AppServiceLocation
     frontDoorId:frontDoorProfile.outputs.profileId
   }
 }
@@ -47,8 +48,7 @@ module endPoint 'modules/frontDoorEndpoint.bicep' = {
   params: {
     enabledState: enabledState
     frontDoorEndpointName: frontDoorEndPointName
-    location: location
-    parent: frontDoorProfile
+    location: location 
   }
 }
 
@@ -76,7 +76,6 @@ module origin 'modules/frontDoorOrigin.bicep' = {
     sampleRequired: sampleRequired
     sampleSize: sampleSize
     weight: weight
-    parent: frontDoorProfile
     hostname: appService.outputs.hostName
     originHostHeader: appService.outputs.hostName
   }
@@ -92,6 +91,5 @@ module route 'modules/route.bicep' = {
     dependsOn:origin.outputs.fdorigin
     frontDoorRouteName: routeName
     originId: origin.outputs.originId
-    parent: endPoint   
   }
 }
