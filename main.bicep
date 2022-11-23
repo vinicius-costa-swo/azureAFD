@@ -4,13 +4,6 @@ targetScope = 'resourceGroup'
 
 var location = 'global'
 
-//resource frontDoorProfile 'Microsoft.Cdn/profiles@2021-06-01' existing = {
-  //name: 'fdprofilename'
-//}
-resource appService 'Microsoft.Web/sites@2022-03-01' existing = {
-  name: 'testappvinicosta'
-}
-
 //Endpoint
 var endPointDeploymentName = 'edpDeploy'
 var enabledState = 'Enabled'
@@ -24,8 +17,6 @@ module endPoint 'modules/frontDoorEndpoint.bicep' = {
     location: location 
   }
 }
-
-
 
 var appDeployName = 'appOriginDeploy'
 var appWeight = 800
