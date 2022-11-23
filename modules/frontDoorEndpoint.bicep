@@ -13,6 +13,7 @@ resource frontDoorEndpoint 'Microsoft.Cdn/profiles/afdEndpoints@2021-06-01' = {
   properties: {
     enabledState: enabledState
   }
+  
 }
 
-output endpointURL string = frontDoorEndpoint.properties.hostName
+//output endpointURL string = frontDoorEndpoint.properties.hostName
