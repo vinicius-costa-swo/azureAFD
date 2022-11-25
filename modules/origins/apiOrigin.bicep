@@ -1,7 +1,6 @@
 resource frontDoorOriginGroup 'Microsoft.Cdn/profiles/originGroups@2021-06-01' existing = {
-  name:'fdprofilename/OriginGroup'
+  name:'apiProfile/apiOriginGroup'
 }
-
 
 param frontDoorOriginName string
 param appPriority int
@@ -24,4 +23,4 @@ resource frontDoorAppOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2021-06
 }
 
 
-output origin string = frontDoorAppOrigin.id
+output apiorigin string = frontDoorAppOrigin.id

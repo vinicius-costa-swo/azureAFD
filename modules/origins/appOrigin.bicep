@@ -1,5 +1,5 @@
 resource frontDoorOriginGroup 'Microsoft.Cdn/profiles/originGroups@2021-06-01' existing = {
-   name:'fdprofilename/OriginGroup'
+   name:'appProfile/OriginGroup'
 }
 
 resource appService 'Microsoft.Web/sites@2022-03-01' existing = {

@@ -1,4 +1,4 @@
-param apiManagementServiceName string 
+param apiManagementServiceName string
 param location string
 param sku string
 param skuCount int

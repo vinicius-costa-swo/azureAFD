@@ -1,5 +1,5 @@
 resource frontDoorProfile 'Microsoft.Cdn/profiles@2021-06-01' existing =  {
-    name: 'fdprofilename'
+    name: 'appProfile'
 }
 
 param frontDoorEndpointName string

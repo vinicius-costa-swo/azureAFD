@@ -1,10 +1,10 @@
 
 resource frondDoorEndpoint 'Microsoft.Cdn/profiles/afdendpoints@2021-06-01' existing = {
-  name: 'fdprofilename/fdedp'
+  name: 'appProfile/fdedp'
 }
 
 resource frontDoorAppOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' existing = {
-  name: 'fdprofilename/originGroup/appOrigin'
+  name: 'appProfile/originGroup/appOrigin'
 }
 
 //param parent object
