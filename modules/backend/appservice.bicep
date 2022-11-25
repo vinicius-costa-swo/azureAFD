@@ -1,32 +1,33 @@
+resource frontDoorProfile 'Microsoft.Cdn/profiles@2021-06-01' existing = {
+  name: 'appProfile'
+} 
+
+//app service plan
 
 param appServicePlanName string
-param location string
-@allowed([
-  'F1'
-])
-param appServicePlanSkuName string
-param appServicePlanCapacity int
+param applocation string
+param appServiceSkuName string
+param appServiceCapacity int
 
-resource appServicePlan 'Microsoft.Web/serverFarms@2020-06-01' = {
+resource appServicePlan 'Microsoft.Web/serverFarms@2020-06-01' =  {
   name: appServicePlanName
-  location: location
+  location: applocation
   sku: {
-    name: appServicePlanSkuName
-    capacity: appServicePlanCapacity
+    name: appServiceSkuName
+    capacity: appServiceCapacity
   }
   kind: 'app'
 }
 
-//appService Deploy
+//app service app
 
-param kind string
 param appName string
-param frontDoorId string
+param AppServiceLocation string 
 
 resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
   name: appName
-  location: location
-  kind: kind
+  location: AppServiceLocation
+  kind: 'app'
   identity: {
     type: 'SystemAssigned'
   }
@@ -46,7 +47,7 @@ resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
         priority: 100
         headers: {
           'x-azure-fdid':[
-            frontDoorId
+           frontDoorProfile.properties.frontDoorId
           ]
         }
         name: 'Allow traffic from Front Door'
@@ -54,5 +55,3 @@ resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
     }
   }
 }
-
-output hostName string = appServiceApp.properties.defaultHostName
