@@ -17,3 +17,4 @@ module appService 'modules/backend/appservice.bicep' = {
     appServiceSkuName: appServiceSkuName
   }
 }
+

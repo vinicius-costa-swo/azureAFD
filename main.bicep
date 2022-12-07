@@ -39,6 +39,7 @@ module appServiceOrigin 'modules/origins/appOrigin.bicep' =  {
 
 
 //Origin
+
 var originDeployName = 'originDeploy'
 var frontDoorOriginGroupName = 'OriginGroup'
 var poolIntervalInSeconds = 100
